@@ -240,20 +240,22 @@ public class AdvisorsGUI {
         Statement st = con.createStatement();
 
         String sql = "SELECT * FROM appointments";
-
+        String fullName ;
         ResultSet rs = st.executeQuery(sql);
         Set<String> advisorNames = new HashSet<>();
         while (rs.next()) {
 
             String Fname = rs.getString("FName");
             String Lname = rs.getString("LName");
-            String fullName = Fname + " " + Lname;
+            fullName = Fname + " " + Lname;
             advisorNames.add(fullName);
+          
             // add advisors to the panel
         }
         // الآن، يمكننا إضافة الأسماء الفريدة إلى اللوحة
         for (String name : advisorNames) {
             addAdvisorButton(advisorsPanel, "Counselor: " + name);
+          
 
         }
 
@@ -289,7 +291,7 @@ public class AdvisorsGUI {
             public void actionPerformed(ActionEvent e) {
 
                 try {
-                    new booking(fullName);
+                    Booking booking = new Booking(fullName);
                 } catch (SQLException ex) {
                     Logger.getLogger(AdvisorsGUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -299,7 +301,6 @@ public class AdvisorsGUI {
         });
 
         // load and set advisor image
-     
         advisorButton.setHorizontalTextPosition(SwingConstants.RIGHT); // position text to the right of the icon
         panel.add(advisorButton); // add the advisor button to the panel
     }
