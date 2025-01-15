@@ -4,33 +4,38 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Welcome extends JFrame {
 
+    private static final String URL = "jdbc:mysql://localhost:3306/project2";
+    private static final String USER = "root";
+    private static final String PASSWORD = "layanasdf";
+
     // Main method to start the consultation system
     public void Start() {
+        // Create a new JFrame (window)
         JFrame myFrame = new JFrame("Consultation System");
         myFrame.setSize(900, 700);
+        myFrame.setResizable(false);
         myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Create a title label at the top of the window
         JLabel titleLabel = new JLabel("Welcome to the Consultation System", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setBounds(0, 420, myFrame.getWidth(), 50);
         myFrame.getContentPane().add(titleLabel);
 
+        // Add a background image to the frame
         ImageIcon backgroundImage = new ImageIcon(Welcome.class.getResource("/image/background2.png"));
         JLabel backgroundLabel = new JLabel(backgroundImage);
         backgroundLabel.setBounds(0, -40, myFrame.getWidth(), myFrame.getHeight());
         myFrame.setLayout(null);
         myFrame.getContentPane().add(backgroundLabel);
 
+        // Create login and sign-up buttons
         JButton loginButton = new JButton("Login");
         loginButton.setBounds(275, 500, 150, 45);
         loginButton.setBackground(Color.decode("#74b4c4"));
@@ -39,22 +44,12 @@ public class Welcome extends JFrame {
         signUpButton.setBounds(475, 500, 150, 45);
         signUpButton.setBackground(Color.decode("#74b4c4"));
 
+        // Make the frame visible
         myFrame.setVisible(true);
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLoginFrame();
-            }
-        });
-
-        signUpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openSignUpFrame();
-                dispose();
-            }
-        });
+        // Add action listeners for the buttons
+        loginButton.addActionListener(e -> openLoginFrame());
+        signUpButton.addActionListener(e -> openSignUpFrame());
 
         myFrame.getContentPane().add(loginButton);
         myFrame.getContentPane().setComponentZOrder(loginButton, 0);
@@ -62,53 +57,27 @@ public class Welcome extends JFrame {
         myFrame.getContentPane().setComponentZOrder(signUpButton, 0);
     }
 
+    // Method to open the sign-up frame when the "Sign Up" button is clicked
     public void openSignUpFrame() {
+        // Create a new JFrame for the sign-up window
         JFrame signUpFrame = new JFrame("Sign Up");
         signUpFrame.setSize(900, 700);
         signUpFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        // Add a background image to the sign-up frame
         ImageIcon signUpBackground = new ImageIcon(Welcome.class.getResource("/image/signup1.png"));
         JLabel backgroundLabel = new JLabel(signUpBackground);
         backgroundLabel.setBounds(0, 0, signUpFrame.getWidth(), signUpFrame.getHeight());
 
         signUpFrame.setLayout(null);
 
-        JLabel firstNameLabel = new JLabel("First Name:");
-        firstNameLabel.setBounds(500, 200, 100, 25);
-        firstNameLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        signUpFrame.add(firstNameLabel);
+        // Add text fields for first name, last name, username, and email
+        JTextField firstNameField = addTextFieldWithLabel(signUpFrame, "First Name:", 500, 200, 600, 200);
+        JTextField lastNameField = addTextFieldWithLabel(signUpFrame, "Last Name:", 500, 250, 600, 250);
+        JTextField usernameField = addTextFieldWithLabel(signUpFrame, "Username:", 500, 300, 600, 300);
+        JTextField emailField = addTextFieldWithLabel(signUpFrame, "Email:", 500, 350, 600, 350);
 
-        JTextField firstNameField = new JTextField();
-        firstNameField.setBounds(600, 200, 250, 35);
-        signUpFrame.add(firstNameField);
-
-        JLabel lastNameLabel = new JLabel("Last Name:");
-        lastNameLabel.setBounds(500, 250, 100, 25);
-        lastNameLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        signUpFrame.add(lastNameLabel);
-
-        JTextField lastNameField = new JTextField();
-        lastNameField.setBounds(600, 250, 250, 35);
-        signUpFrame.add(lastNameField);
-
-        JLabel userLabel = new JLabel("Username:");
-        userLabel.setBounds(500, 300, 100, 25);
-        userLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        signUpFrame.add(userLabel);
-
-        JTextField usernameField = new JTextField();
-        usernameField.setBounds(600, 300, 250, 35);
-        signUpFrame.add(usernameField);
-
-        JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setBounds(500, 350, 100, 25);
-        emailLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        signUpFrame.add(emailLabel);
-
-        JTextField emailField = new JTextField();
-        emailField.setBounds(600, 350, 250, 35);
-        signUpFrame.add(emailField);
-
+        // Add a password field for the user to enter their password
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setBounds(500, 400, 100, 25);
         passwordLabel.setFont(new Font("Arial", Font.BOLD, 18));
@@ -118,13 +87,13 @@ public class Welcome extends JFrame {
         passwordField.setBounds(600, 400, 250, 35);
         signUpFrame.add(passwordField);
 
-        // Role radio buttons
+        // Add radio buttons for the user to select their role (Consultative or User)
         JRadioButton consultativeButton = new JRadioButton("Consultative");
-        consultativeButton.setBounds(600, 450, 150, 30);
-
+        consultativeButton.setBounds(550, 450, 150, 30);
         JRadioButton normalUserButton = new JRadioButton("User");
-        normalUserButton.setBounds(750, 450, 100, 30);
+        normalUserButton.setBounds(700, 450, 150, 30);
 
+        // Group the role radio buttons together to ensure only one is selected
         ButtonGroup group = new ButtonGroup();
         group.add(normalUserButton);
         group.add(consultativeButton);
@@ -132,24 +101,13 @@ public class Welcome extends JFrame {
         signUpFrame.add(consultativeButton);
         signUpFrame.add(normalUserButton);
 
-        // أزرار الراديو الخاصة بالمهن
-        JRadioButton drawingButton = new JRadioButton("Drawing");
-        drawingButton.setBounds(600, 500, 150, 30);
-        drawingButton.setEnabled(false); // تعطيل الزر في البداية
+        // Add profession radio buttons (optional for consultants)
+        JRadioButton drawingButton = createRadioButton(signUpFrame, "Drawing", 550, 500, false);
+        JRadioButton musicButton = createRadioButton(signUpFrame, "Music", 700, 500, false);
+        JRadioButton writingButton = createRadioButton(signUpFrame, "Writing", 550, 530, false);
+        JRadioButton photographyButton = createRadioButton(signUpFrame, "Photography", 700, 530, false);
 
-        JRadioButton musicButton = new JRadioButton("Music");
-        musicButton.setBounds(750, 500, 100, 30);
-        musicButton.setEnabled(false); // تعطيل الزر في البداية
-
-        JRadioButton writingButton = new JRadioButton("Writing");
-        writingButton.setBounds(600, 530, 150, 30);
-        writingButton.setEnabled(false); // تعطيل الزر في البداية
-
-        JRadioButton photographyButton = new JRadioButton("Photography");
-        photographyButton.setBounds(750, 530, 100, 30);
-        photographyButton.setEnabled(false); // تعطيل الزر في البداية
-
-        // مجموعة لأزرار الراديو الخاصة بالمهن
+        // Group profession buttons together
         ButtonGroup professionGroup = new ButtonGroup();
         professionGroup.add(drawingButton);
         professionGroup.add(musicButton);
@@ -185,13 +143,29 @@ public class Welcome extends JFrame {
                 musicButton.setSelected(false);
                 writingButton.setSelected(false);
                 photographyButton.setSelected(false);
-            
 
             }
         });
 
+        // Create Back Button to go back to the previous screen
+        JButton backButton = new JButton("← Back");
+        backButton.setBounds(3, 3, 80, 45); // set button size and position
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        // Add the back button to the frame
+        signUpFrame.add(backButton);
+        backButton.setBackground(Color.decode("#74b4c4")); // set button background color
+        // Action listener for the back button to close the window
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                signUpFrame.dispose(); // Close the consultation frame
+            }
+        });
         signUpFrame.setVisible(true);
 
+        // Add the "Sign Up" button to complete the registration
         JButton createAccountButton = new JButton("Sign Up");
         createAccountButton.setBounds(648, 580, 150, 45);
         createAccountButton.setBackground(Color.decode("#74b4c4"));
@@ -202,154 +176,152 @@ public class Welcome extends JFrame {
         createAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String firstName = firstNameField.getText();
-                String lastName = lastNameField.getText();
-                String username = usernameField.getText();
-                String email = emailField.getText();
-                String password = new String(passwordField.getPassword());
+
+// Retrieve user input
+                String firstName = firstNameField.getText().trim();
+                String lastName = lastNameField.getText().trim();
+                String username = usernameField.getText().trim();
+                String email = emailField.getText().trim();
+                String password = new String(passwordField.getPassword()).trim();
 
                 String role = "";
                 String profession = "";
+
+                // Validate user input
+                if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                    JOptionPane.showMessageDialog(signUpFrame, "All fields are required!");
+                    return;
+                }
+
+                if (!email.matches("^(?!.*\\.\\.)[a-zA-Z0-9]+([._+-][a-zA-Z0-9]+)*@gmail\\.com$")) {
+                    JOptionPane.showMessageDialog(signUpFrame, "Invalid email, You should use a valid Gmail address (e.g., example@gmail.com)");
+                    return;
+                }
+                if (!(consultativeButton.isSelected() || normalUserButton.isSelected())) {
+                    JOptionPane.showMessageDialog(signUpFrame, "Please select a role.");
+                    return;
+                }
+
                 if (consultativeButton.isSelected()) {
                     role = "Consultative";
-
                     if (drawingButton.isSelected()) {
                         profession = "Drawing";
                     } else if (musicButton.isSelected()) {
-                        profession = "music";
+                        profession = "Music";
                     } else if (writingButton.isSelected()) {
-                        profession = "writing";
-                    } else {
+                        profession = "Writing";
+                    } else if (photographyButton.isSelected()) {
                         profession = "Photography";
-                    }
-
-                    if (!(drawingButton.isSelected() || musicButton.isSelected() || writingButton.isSelected() || photographyButton.isSelected())) {
-                        JOptionPane.showMessageDialog(signUpFrame, "Please choose one of the profession.");
-                        return;
-
-                    } else if (normalUserButton.isSelected()) {
-                        role = "User";
-                    }
-
-                    if (!email.contains("@") || !email.contains(".")) {
-                        JOptionPane.showMessageDialog(signUpFrame, "Invalid email format.");
+                    } else {
+                        JOptionPane.showMessageDialog(signUpFrame, "Please select a profession.");
                         return;
                     }
-                } else if (normalUserButton.isSelected()) {
+                } else {
                     role = "User";
                 }
-                try {
-                    if (registerUser(firstName, lastName, username, email, password, role, profession)) {
 
-                        JOptionPane.showMessageDialog(signUpFrame, "Sign-up successful!");
-                        Session.setUsername(username);
+                // Attempt to register the user
+                try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD)) {
+                    // Create a connection to the database
+                    String recipient = email;  // Recipient email
+                    String subject = "Account Created Successfully!";  // Email subject
+                    String body = "Hello! Your account has been created successfully";  // Email content
+
+                    // Check email and username availability
+                    if (checkEmail(email) == true && checkUsername(username) == true) {
+                        // If both email and username are available
+                        new EmailSender(recipient, subject, body);  // Send confirmation email
+
+                        PreparedStatement ps;// Declare a PreparedStatement for executing SQL queries
+                        // If the user role is "Consultative", insert into the "consultative" table
                         if (role.equalsIgnoreCase("Consultative")) {
-                            Home home = new Home();
-                            home.ConsultativeHome();
-                            signUpFrame.dispose();
-                            home.setVisible(true);
+                            ps = createPreparedStatement(con,
+                                    "INSERT INTO consultative (FirstName, LastName, Username, Email, Role, Password, Profession) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                                    firstName, lastName, username, email, role, password, profession);
+
+                            // Otherwise, insert into the "users" table
                         } else {
-                            Home home = new Home();
-                            home.UserHome();
-                            home.setVisible(true);
-                            signUpFrame.dispose();
+                            ps = createPreparedStatement(con,
+                                    "INSERT INTO users (FirstName, LastName, Username, Email, Password, Role) VALUES (?, ?, ?, ?, ?, ?)",
+                                    firstName, lastName, username, email, password, role);
+
                         }
+                        ps.executeUpdate(); // Execute the query and insert the record into the database
+                        Session.setUsername(username);// Save the username in the session
+                        SignUpSuccess(role); // Call the method to show a success message to the user
+                    } else if (checkEmail(email) == false && checkUsername(username) == true) {//call method checkEmail and checkUsername
+                        JOptionPane.showMessageDialog(signUpFrame, "Email already exists. Please use another email.");
+                    } else if (checkUsername(username) == false && checkEmail(email) == true) {
+                        JOptionPane.showMessageDialog(signUpFrame, "Username already exists. Please choose another username.");
                     } else {
-                        JOptionPane.showMessageDialog(signUpFrame, "Sign-up failed. Username may already exist.");
+                        JOptionPane.showMessageDialog(signUpFrame, "Both email and username are already in use.");
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Welcome.class.getName()).log(Level.SEVERE, "Database error: " + ex.getMessage(), ex);
+                    JOptionPane.showMessageDialog(signUpFrame, "An error occurred while processing your request. Please try again.");
                 }
+                dispose();
+            }
+
+            // Utility method for handling successful sign-up
+            private void SignUpSuccess(String role) {
+                JOptionPane.showMessageDialog(signUpFrame, "Sign-up successful!");
+                HomePage home = new HomePage(role);
+                Session.setRole(role);
+                signUpFrame.dispose();
+                home.setVisible(true);
+
             }
         });
+
     }
 
-    private boolean registerUser(String firstName, String lastName, String username, String email, String password, String role, String profession) throws SQLException {
-        String connectionURL = "jdbc:mysql://localhost:3306/project2";
+    /*method creates a JLabel and a JTextField, positions them on the frame,
+    and returns the created JTextField for further use*/
+    private JTextField addTextFieldWithLabel(JFrame frame, String labelText, int labelX, int labelY, int fieldX, int fieldY) {
+        JLabel label = new JLabel(labelText);
+        label.setBounds(labelX, labelY, 150, 25);
+        label.setFont(new Font("Arial", Font.BOLD, 18));
+        frame.add(label);
 
-        try (Connection con = DriverManager.getConnection(connectionURL, "root", "layanasdf")) {
-            PreparedStatement ps;
+        JTextField textField = new JTextField();
+        textField.setBounds(fieldX, fieldY, 250, 35);
+        frame.add(textField);
 
-            // تحقق من الدور وأعد توجيه إلى الاستعلام المناسب
-            if (role.equalsIgnoreCase("user")) {
-                ps = con.prepareStatement("INSERT INTO USERS (FirstName, LastName, Username, Email, Password, Role) VALUES (?, ?, ?, ?, ?, ?)");
-
-                // تعيين القيم في الاستعلام
-                ps.setString(1, firstName);
-                ps.setString(2, lastName);
-                ps.setString(3, username);
-                ps.setString(4, email);
-                ps.setString(5, password);
-                ps.setString(6, role);
-
-                ps.executeUpdate();
-                return true;
-            } else if (role.equalsIgnoreCase("Consultative")) {
-                ps = con.prepareStatement("INSERT INTO consultative (FirstName, LastName, Username, Email,Role , Password,  Profession) VALUES (?, ?, ?, ?, ?, ?, ?)");
-
-                // تعيين القيم في الاستعلام
-                ps.setString(1, firstName);
-                ps.setString(2, lastName);
-                ps.setString(3, username);
-                ps.setString(4, email);
-                ps.setString(5, role);
-                ps.setString(6, password);
-                ps.setString(7, profession);
-                ps.executeUpdate();
-                return true;
-            } else {
-                // إذا لم يكن الدور "user" أو "Consultative"، قم بإرجاع false
-                return false;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return textField;
     }
 
-    public boolean authenticateUser(String username, String password) {
-        String connectionURL = "jdbc:mysql://localhost:3306/project2";
-        try (Connection con = DriverManager.getConnection(connectionURL, "root", "layanasdf")) {
-            ResultSet rs;
-            Boolean result;
+    //method to create radio buttons, allowing for enabling/disabling
+    private JRadioButton createRadioButton(JFrame frame, String text, int x, int y, boolean enabled) {
+        JRadioButton button = new JRadioButton(text);
+        button.setBounds(x, y, 150, 30);
+        button.setEnabled(enabled);
+        frame.add(button);
+        return button;
+    }
 
-            String query = "SELECT * FROM USERS WHERE Username = ? AND Password = ?";
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, username);
-            ps.setString(2, password);
-
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-
-                return true;
-            }
-
-            query = "SELECT * FROM consultative WHERE Username = ? AND Password = ?";
-            ps = con.prepareStatement(query);
-            ps.setString(1, username);
-            ps.setString(2, password);
-
-            rs = ps.executeQuery();
-            return rs.next();
-
-        } catch (SQLException e) {
-            return false;
+    // Helper method to create a prepared statement with the provided parameters
+    private PreparedStatement createPreparedStatement(Connection con, String query, String... params) throws SQLException {
+        PreparedStatement ps = con.prepareStatement(query);
+        for (int i = 0; i < params.length; i++) {
+            ps.setString(i + 1, params[i]);
         }
-
+        return ps;
     }
 
     public void openLoginFrame() {
         JFrame logInUpFrame = new JFrame("Log in");
         logInUpFrame.setSize(900, 700);
+        logInUpFrame.setResizable(false);
         logInUpFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        // Set up the background image
         ImageIcon loginBackground = new ImageIcon(Welcome.class.getResource("/image/login1.png"));
         JLabel backgroundLabel = new JLabel(loginBackground);
         backgroundLabel.setBounds(0, 0, logInUpFrame.getWidth(), logInUpFrame.getHeight());
         logInUpFrame.setLayout(null);
 
+        // Add user and password fields to the frame
         JLabel userLabel = new JLabel("Username:");
         userLabel.setBounds(500, 250, 100, 25);
         userLabel.setFont(new Font("Arial", Font.BOLD, 18));
@@ -368,6 +340,24 @@ public class Welcome extends JFrame {
         passwordField.setBounds(600, 300, 250, 35);
         logInUpFrame.add(passwordField);
 
+        // Create Back Button to go back to the previous screen
+        JButton backButton = new JButton("← Back");
+        backButton.setBounds(3, 3, 80, 45); // set button size and position
+        backButton.setBorderPainted(false);
+        backButton.setFocusPainted(false);
+        backButton.setContentAreaFilled(false);
+        // Add the back button to the frame
+        logInUpFrame.add(backButton);
+        backButton.setBackground(Color.decode("#74b4c4")); // set button background color
+        // Action listener for the back button to close the window
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                logInUpFrame.dispose(); // Close the consultation frame
+            }
+        });
+        logInUpFrame.setVisible(true);
+
         JButton loginButton = new JButton("Login");
         loginButton.setBounds(650, 420, 150, 45);
         loginButton.setBackground(Color.decode("#74b4c4"));
@@ -378,49 +368,102 @@ public class Welcome extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+// Retrieve the entered username and password from the text fields
+                new ChatServer();
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
 
+                // Check if authentication is successful
                 if (authenticateUser(username, password)) {
-                    String getRole = getDataByPrimaryKey(username);
-                    String getRole2 = getDataByPrimaryKey2(username);
+                    // Get the user's role from the database
+                    String User = getDataByPrimaryKey(username);
+                    String Consultative = getDataByPrimaryKey2(username);
+                    // Set the username in the session
                     Session.setUsername(username);
-                    if (getRole2 != null && getRole == null) {
-                        Home home = new Home();
-                        home.ConsultativeHome();
+                    // Direct the user to the appropriate home page based on their role
+                    if (Consultative != null && User == null) {
+                        HomePage home = new HomePage("Consultative");// Open consultative home page
+                        Session.setRole(Consultative); // Set the consultative role in the session
                         home.setVisible(true);
-                        Welcome.this.dispose();
-                    } else if (getRole != null && getRole2 == null) {
-                        Home home = new Home();
-                        home.UserHome();
-                        home.setVisible(true);
-                        Welcome.this.dispose();
+                        logInUpFrame.dispose(); // Close the login frame upon successful login
 
-                    } else {
-                        JOptionPane.showMessageDialog(logInUpFrame, "Log in failed. Username or password may be incorrect.");
+                        Welcome.this.dispose();
+                        new Notification(); // Show a notification
+
+                    } else if (User != null && Consultative == null) {
+                        HomePage home = new HomePage("User");// Open user home page
+                        Session.setRole(User); // Set the user role in the session
+                        home.setVisible(true);
+                        logInUpFrame.dispose(); // Close the login frame upon successful 
+                        Welcome.this.dispose();
+                        new Notification();
                     }
+                } else {
+                    // Show a login failure message without closing the main frame
+                    JOptionPane.showMessageDialog(
+                            logInUpFrame,
+                            "Log in failed. Username or password may be incorrect.",
+                            "Login Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
+                //logInUpFrame.dispose();
             }
         });
-
     }
 
-    public static String getDataByPrimaryKey(String primaryKey) {
-        String URL = "jdbc:mysql://localhost:3306/project2";
-        String USER = "root";
-        String PASSWORD = "layanasdf";
+    // Method to authenticate a user by checking their credentials in the database
+    public boolean authenticateUser(String username, String password) {
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            ResultSet rs;
+            Boolean result;
 
+            // Query to check the USERS table for the given username and password
+            String query = "SELECT * FROM USERS WHERE Username = ? AND Password = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, password);
+
+            rs = ps.executeQuery();
+
+            // If a match is found in the USERS table, return true
+            if (rs.next()) {
+
+                return true;
+            }
+
+            // Query to check the consultative table for the given username and password
+            query = "SELECT * FROM consultative WHERE Username = ? AND Password = ?";
+            ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, password);
+
+            // Return true if a match is found in the consultative table
+            rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            // Return false if there is a database error
+            return false;
+        }
+    }
+
+    // Method to retrieve the role of a user from the 'users' table based on the username (primary key)
+    public static String getDataByPrimaryKey(String primaryKey) {
+
+        // SQL query to select the row where the username matches the provided primary key
         String query = "SELECT * FROM users WHERE username = ?";
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, primaryKey); // تعيين قيمة المفتاح الأساسي
+            // Set the value of the primary key in the prepared statement
+            statement.setString(1, primaryKey);
 
+            // Execute the query and get the result
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-
                 String name = resultSet.getString("role");
                 return name;
             } else {
@@ -433,22 +476,22 @@ public class Welcome extends JFrame {
 
     }
 
+    // Method to retrieve the role of a consultative user from the 'consultative' table based on the username (primary key)
     public static String getDataByPrimaryKey2(String primaryKey) {
-        String URL = "jdbc:mysql://localhost:3306/project2";
-        String USER = "root";
-        String PASSWORD = "layanasdf";
 
+        // SQL query to select the row where the username matches the provided primary key in the consultative table
         String query = "SELECT * FROM consultative WHERE username = ?";
-
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, primaryKey); // تعيين قيمة المفتاح الأساسي
-
+            // Set the value of the primary key in the prepared statement
+            statement.setString(1, primaryKey);
             ResultSet resultSet = statement.executeQuery();
 
+            // If the result set contains data, retrieve the user's role
             if (resultSet.next()) {
 
+                // Get the role of the consultative user
                 String name = resultSet.getString("role");
                 return name;
             } else {
@@ -460,325 +503,46 @@ public class Welcome extends JFrame {
         return null;
 
     }
-}
 
-///*
-// * To change this license header, choose License Headers in Project Properties.
-// * To change this template file, choose Tools | Templates
-// * and open the template in the editor.
-// */
-//package pack305;
-//
-//import javax.swing.*;
-//import java.awt.*;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.sql.Statement;
-//import javax.imageio.ImageIO;
-//
-//public class Welcome extends JFrame {
-//
-//    // Main method to start the consultation system
-//    public void Start() {
-//        // Create a new JFrame for the welcome window
-//        JFrame myFrame = new JFrame("Consultation System");
-//
-//        // Set size of JFrame
-//        myFrame.setSize(900, 700);
-//
-//        // Set default close operation to close the application
-//        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//
-//        // create a JLabel for the title under the logo
-//        JLabel titleLabel = new JLabel("Welcome to the Consultation System", SwingConstants.CENTER);
-//        titleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // customize the font and size
-//        titleLabel.setBounds(0, 420, myFrame.getWidth(), 50); // position the title below the logo and center it
-//
-//        // Add the title to the frame
-//        myFrame.getContentPane().add(titleLabel);
-//
-//        // Create a JLabel with an ImageIcon for the background
-//        ImageIcon backgroundImage = new ImageIcon(Welcome.class.getResource("/image/background2.png"));
-//        JLabel backgroundLabel = new JLabel(backgroundImage);
-//        // Set bounds of backgroundLabel to cover the entire JFrame
-//        backgroundLabel.setBounds(0, -40, myFrame.getWidth(), myFrame.getHeight());
-//
-//        // Set layout of JFrame to null to allow manual positioning of components
-//        myFrame.setLayout(null);
-//
-//        // Add backgroundLabel to the content pane of the JFrame
-//        myFrame.getContentPane().add(backgroundLabel);
-//
-//        // Create login button
-//        JButton loginButton = new JButton("Login");
-//        loginButton.setBounds(275, 500, 150, 45); // set button size and position
-//        loginButton.setBackground(Color.decode("#74b4c4")); // change the button background color
-//
-//        // Create sign-up button
-//        JButton signUpButton = new JButton("Sign Up");
-//        signUpButton.setBounds(475, 500, 150, 45); // set button size and position
-//        signUpButton.setBackground(Color.decode("#74b4c4")); // change the button background color
-//
-//        // Make the JFrame visible
-//        myFrame.setVisible(true);
-//
-//        // Add action listeners for button events
-//        loginButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                // open the login frame when the login button is pressed
-//                openloginFrame();
-//            }
-//        });
-//
-//        signUpButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                // open the sign-up frame when the sign-up button is pressed
-//                openSignUpFrame();
-//                dispose(); // close the welcome page when opening the login window
-//            }
-//        });
-//
-//        // Add the login button to the content pane of the JFrame
-//        myFrame.getContentPane().add(loginButton);
-//
-//        // Ensure the button is in front of the background label
-//        myFrame.getContentPane().setComponentZOrder(loginButton, 0);
-//
-//        // Add the sign-up button to the content pane of the JFrame
-//        myFrame.getContentPane().add(signUpButton);
-//
-//        // Ensure the button is in front of the background label
-//        myFrame.getContentPane().setComponentZOrder(signUpButton, 0);
-//    }
-//
-//    // Method to display a frame for role selection
-//    public static void RoleSelectionFrame() {
-//        // create a JFrame for selecting roles
-//        JFrame roleFrame = new JFrame("Select Role");
-//        roleFrame.setSize(900, 700); // set frame size
-//        roleFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close the application on exit
-//        roleFrame.setLayout(null); // manual layout for components
-//
-//        // create user role button
-//        JButton userButton = new JButton("User");
-//        userButton.setBounds(250, 300, 150, 45); // set button position
-//        userButton.setFont(new Font("Arial", Font.BOLD, 18)); // enlarge the font size
-//        roleFrame.add(userButton); // add the user button to the frame
-//
-//        // create consultant role button
-//        JButton consultantButton = new JButton("Consultant");
-//        consultantButton.setBounds(500, 300, 150, 45); // set button position
-//        consultantButton.setFont(new Font("Arial", Font.BOLD, 18)); // enlarge the font size
-//        roleFrame.add(consultantButton); // add the consultant button to the frame
-//
-//        // make the frame visible
-//        roleFrame.setVisible(true);
-//    }
-//
-//    // Method to open the sign-up frame
-//    public void openSignUpFrame() {
-//        // create a new frame for sign-up
-//        JFrame signUpFrame = new JFrame("Sign Up");
-//        signUpFrame.setSize(900, 700); // set frame size
-//        signUpFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // close only the current frame
-//
-//        // Create a JLabel with an ImageIcon for the background
-//        ImageIcon signUpBackground = new ImageIcon(Welcome.class.getResource("/image/signup1.png"));
-//        JLabel backgroundLabel = new JLabel(signUpBackground);
-//        backgroundLabel.setBounds(0, 0, signUpFrame.getWidth(), signUpFrame.getHeight()); // set background size
-//
-//        // set layout to null for manual positioning
-//        signUpFrame.setLayout(null);
-//
-//        // add components to the sign-up window (e.g., labels and text fields)
-//        JLabel userLabel = new JLabel("Username:");
-//        userLabel.setBounds(500, 250, 100, 25); // set position
-//        userLabel.setFont(new Font("Arial", Font.BOLD, 18)); // set font size
-//        signUpFrame.add(userLabel);
-//
-//        JTextField usernameField = new JTextField();
-//        usernameField.setBounds(600, 250, 250, 35); // set text field size and position
-//        signUpFrame.add(usernameField);
-//
-//        // create the email label and text field
-//        JLabel emailLabel = new JLabel("Email:");
-//        emailLabel.setBounds(500, 300, 100, 25); // set label position
-//        emailLabel.setFont(new Font("Arial", Font.BOLD, 18)); // set font size
-//        signUpFrame.add(emailLabel);
-//
-//        JTextField emailField = new JTextField();
-//        emailField.setBounds(600, 300, 250, 35); // set text field size and position
-//        signUpFrame.add(emailField);
-//
-//        JLabel passwordLabel = new JLabel("Password:");
-//        passwordLabel.setBounds(500, 350, 100, 25); // set label position
-//        passwordLabel.setFont(new Font("Arial", Font.BOLD, 18)); // set font size
-//        signUpFrame.add(passwordLabel);
-//
-//        JPasswordField passwordField = new JPasswordField();
-//        passwordField.setBounds(600, 350, 250, 35); // set text field size and position
-//        signUpFrame.add(passwordField);
-//
-//        JLabel roleLabel = new JLabel("Role:");
-//        roleLabel.setBounds(500, 400, 100, 25);
-//        roleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-//        signUpFrame.add(roleLabel);
-//
-//        JTextField roleField = new JTextField();
-//        roleField.setBounds(600, 400, 250, 35);
-//        signUpFrame.add(roleField);
-//
-//        // create a sign-up button
-//        JButton createAccountButton = new JButton("Sign Up");
-//        createAccountButton.setBounds(650, 450, 150, 45); // set button size and position
-//        signUpFrame.add(createAccountButton);
-//        createAccountButton.setBackground(Color.decode("#74b4c4")); // set button background color
-//
-//        // add the background image to the sign-up window
-//        signUpFrame.getContentPane().add(backgroundLabel);
-//
-//        // make the sign-up window visible
-//        signUpFrame.setVisible(true);
-//
-////open home page when entering button
-//        createAccountButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                String username = usernameField.getText();
-//                String email = emailField.getText();
-//                String password = new String(passwordField.getPassword());
-//                String role = roleField.getText();
-//                if (!email.contains("@") || !email.endsWith(".")) {
-//                    JOptionPane.showMessageDialog(signUpFrame, "Invalid email format. ");
-//                    return; // إذا كان التنسيق غير صحيح، نعرض الرسالة ونوقف التنفيذ
-//                }
-//                if (registerUser(username, email, password, role)) {
-//                    JOptionPane.showMessageDialog(signUpFrame, "Sign-up successful!");
-//                    Home home = new Home();
-//                    home.setVisible(true);
-//                    setVisible(false);
-//                    signUpFrame.dispose();
-//
-//                } else {
-//                    JOptionPane.showMessageDialog(signUpFrame, "Sign-up failed. Username may already exist.");
-//                }
-//
-//            }
-//
-//        });
-//    }
-//
-//    // Database method for registering a new user
-//    private boolean registerUser(String username, String email, String password, String role) {
-//        String connectionURL = "jdbc:mysql://localhost:3306/project2"; // ضع اسم قاعدة البيانات هنا بعد localhost:3306
-//        try (Connection con = DriverManager.getConnection(connectionURL, "root", "1234");
-//                PreparedStatement ps = con.prepareStatement("INSERT INTO USERS (Username, Email, Password, Role) VALUES (?, ?, ?, ?)")) {
-//
-//            // إعداد القيم في الاستعلام
-//            ps.setString(1, username);
-//            ps.setString(2, email);
-//            ps.setString(3, password);
-//            ps.setString(4, role);
-//
-//            // تنفيذ الاستعلام
-//            ps.executeUpdate();
-//
-//            // إذا نجح الإدخال، أعد true
-//            return true;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            // في حال الفشل، أعد false
-//            return false;
-//        }
-//    }
-//
-//    public boolean authenticateUser(String username, String password) {
-//        String connectionURL = "jdbc:mysql://localhost:3306/project2";
-//        try (Connection con = DriverManager.getConnection(connectionURL, "root", "1234")) {
-//            String query = "SELECT * FROM USERS WHERE Username = ? AND Password = ?";
-//            PreparedStatement ps = con.prepareStatement(query);
-//            ps.setString(1, username);
-//            ps.setString(2, password);
-//            ResultSet rs = ps.executeQuery();
-//            return rs.next(); // Returns true if user exists
-//        } catch (SQLException e) {
-//
-//            return false;
-//        }
-//    }
-//
-//    // Method to open the login frame
-//    public void openloginFrame() {
-//        // create a new frame for login
-//        JFrame logInUpFrame = new JFrame("Log in");
-//        logInUpFrame.setSize(900, 700); // set frame size
-//        logInUpFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // close only the current frame
-//
-//        // Create a JLabel with an ImageIcon for the background
-//        ImageIcon loginBackground = new ImageIcon(Welcome.class.getResource("/image/login1.png"));
-//        JLabel backgroundLabel = new JLabel(loginBackground);
-//        backgroundLabel.setBounds(0, 0, logInUpFrame.getWidth(), logInUpFrame.getHeight()); // set background size
-//
-//        // set layout to null for manual positioning
-//        logInUpFrame.setLayout(null);
-//
-//        // add components to the login window (e.g., labels and text fields)
-//        JLabel userLabel = new JLabel("Username:");
-//        userLabel.setBounds(500, 250, 100, 25); // set label position
-//        userLabel.setFont(new Font("Arial", Font.BOLD, 18)); // set font size
-//        logInUpFrame.add(userLabel);
-//
-//        JTextField usernameField = new JTextField();
-//        usernameField.setBounds(600, 250, 250, 35); // set text field size and position
-//        logInUpFrame.add(usernameField);
-//
-//        // create the password label and text field
-//        JLabel passwordLabel = new JLabel("Password:");
-//        passwordLabel.setBounds(500, 300, 100, 25); // set label position
-//        passwordLabel.setFont(new Font("Arial", Font.BOLD, 18)); // set font size
-//        logInUpFrame.add(passwordLabel);
-//
-//        JPasswordField passwordField = new JPasswordField();
-//        passwordField.setBounds(600, 300, 250, 35); // set text field size and position
-//        logInUpFrame.add(passwordField);
-//
-//        // create a login button
-//        JButton createAccountButton = new JButton("Login");
-//        createAccountButton.setBounds(650, 420, 150, 45); // set button size and position
-//        logInUpFrame.add(createAccountButton);
-//        createAccountButton.setBackground(Color.decode("#74b4c4")); // set button background color
-//
-//        // add the background image to the login window
-//        logInUpFrame.getContentPane().add(backgroundLabel);
-//
-//        // make the login window visible
-//        logInUpFrame.setVisible(true);
-//
-//        createAccountButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                String username = usernameField.getText();
-//                String password = new String(passwordField.getPassword());
-//
-//                if (authenticateUser(username, password)) {
-//                    Home home = new Home();
-//                    home.setVisible(true);
-//                    setVisible(false);
-//                    Welcome.this.dispose(); // Correctly dispose the Welcome frame
-//                } else {
-//                    JOptionPane.showMessageDialog(logInUpFrame, "log in failed. Username may already exist.");
-//                }
-//
-//            }
-//
-//        });
-//    }
-//
-//}
+    //Checks if an email is already registered in either the users or consultative table
+    public boolean checkEmail(String email) {
+        String query = "SELECT Email FROM users WHERE Email = ? "
+                + "UNION "
+                + "SELECT Email FROM consultative WHERE Email = ?";
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            // Set the email parameter for both tables
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, email);
+            // Execute the query and check for results
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            return !resultSet.next(); // Return true if no result found, meaning email is available
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false if an error occurs, assuming email is unavailable
+        }
+    }
+
+    //Checks if a username is already registered in either the users or consultative table
+    public boolean checkUsername(String username) {
+        String query = "SELECT Username FROM users WHERE Username = ? "
+                + "UNION "
+                + "SELECT Username FROM consultative WHERE Username = ?";
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            // Set the username parameter for both tables
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, username);
+            // Execute the query and check for results
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            return !resultSet.next();  // Return true if no result found, meaning username is available
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false if an error occurs, assuming username is unavailable
+        }
+    }
+}

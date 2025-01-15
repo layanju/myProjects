@@ -1,0 +1,195 @@
+Connected to server.
+You: hi
+Client 2: hry
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+Client 1: hey
+You: hola
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+You: hey
+Client 2: hola
+Client 2: bye
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+You: f
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+You: r
+Client 2: f
+You: f
+You: ff
+Client 2: e
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+You: f
+Client 1: f
+Client 1: ff
+You: e
+Client 1: bye
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+Client 2: h
+You: gi
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+You: h
+Client 1: gi
+Client 1: bye
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+You: h
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Chat started with hh hh.
+You: h
+Client 2: f
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Connected to server.
+Client 1: h
+You: f
+Client 1: bye
+You: bye
+Chat ended.
+
+------ End of Chat ------
+Chat started with hh hh.
+You: jj
+You: bye
+Chat ended.
+
+------ End of Chat ------
+hh: f
+Chat ended.
+
+------ End of Chat ------
+layan: f
+layan: bye
+layan: d
+Chat ended.
+
+------ End of Chat ------
+hh: hey
+Chat ended.
+
+------ End of Chat ------
+layan: hi
+layan: bye
+Chat ended.
+User layan is not online.
+
+------ End of Chat ------
+hh: h
+Chat ended.
+
+------ End of Chat ------
+hh: h
+Chat ended.
+
+------ End of Chat ------
+layan: hi
+layan: bye
+User layan is not online.
+User layan is not online.
+Chat ended.
+
+------ End of Chat ------
+Chat ended.
+
+------ End of Chat ------
+layan: h
+layan: bye
+User layan is not online.
+User layan is not online.
+Chat ended.
+
+------ End of Chat ------
+layan: g
+Chat ended.
+
+------ End of Chat ------
+hh: g
+hh: bye
+Chat ended.
+User hh is not online.
+
+------ End of Chat ------
+hh: g
+Chat ended.
+
+------ End of Chat ------
+layan: g
+layan: bye
+User layan is not online.
+User layan is not online.
+Chat ended.
+
+------ End of Chat ------
+User hh is not online.
+hh: bb
+Chat ended.
+
+------ End of Chat ------
+layan: g
+layan: bye
+Chat ended.
+User layan is not online.
+
+------ End of Chat ------
+Chat ended.
+
+------ End of Chat ------
+ghada: d
+ghada: bye
+Chat ended.
+User ghada is not online.
+
+------ End of Chat ------
+User layan is not online.
+Chat ended.
+
+------ End of Chat ------
+Chat ended.
+
+------ End of Chat ------
+Chat ended.
+
+------ End of Chat ------
+Chat ended.
+User layan is not online.
+
+------ End of Chat ------

@@ -26,10 +26,11 @@ public class TablesDB {
             con = DriverManager.getConnection(ConnectionURL, "root", "layanasdf");
             // Create statement object
             Statement st = con.createStatement();
-
-            String createTableSQL = "CREATE TABLE USERS("
-                    + "FullName VARCHAR(50), "     
-                    + "Username CHAR(50) PRIMARY KEY, "
+//
+            String createTableSQL = "CREATE TABLE USERS ("
+                    + "FirstName VARCHAR(50), "
+                    + "LastName VARCHAR(50), "
+                    + "Username CHAR(50),"
                     + "Email VARCHAR(50), "
                     + "Role VARCHAR(50), "
                     + "Password VARCHAR(50)"
@@ -39,24 +40,25 @@ public class TablesDB {
             String createTableSQLcons = "CREATE TABLE Consultative  ("
                     + "FirstName VARCHAR(50), "
                     + "LastName VARCHAR(50), "
-                    + "Username CHAR(50) PRIMARY KEY, "
+                    + "Username CHAR(50), "
                     + "Email VARCHAR(50), "
                     + "Role VARCHAR(50), "
                     + "Password VARCHAR(50),"
                     + "Profession VARCHAR(50)"
                     + ")";
-//            st.executeUpdate(createTableSQLcons);
-//            String createAppointmentTableSQL = "CREATE TABLE APPOINTMENTS ("
-//                    + "AppointmentID INT AUTO_INCREMENT PRIMARY KEY, "
-//                    + "Fname VARCHAR(50),"
-//                    + "Lname VARCHAR(50),"
-//                    + "Username CHAR(50), " 
-//                    + "AppointmentDate DATE, "
-//                    + "AppointmentTime TIME, "
-//                    + "Booked BOOLEAN)";
-//            st.executeUpdate(createAppointmentTableSQL);
-//            // Confirm database and table creation
-//            System.out.println("Database and table created successfully.");
+            st.executeUpdate(createTableSQLcons);
+            String createAppointmentTableSQL = "CREATE TABLE APPOINTMENTS ("
+                    + "AppointmentID INT AUTO_INCREMENT PRIMARY KEY, "
+                    + "Fname VARCHAR(50),"
+                    + "Lname VARCHAR(50),"
+                    + "Username CHAR(50), " 
+                    + "Beneficiary_Name VARCHAR(50),"
+                    + "AppointmentDate DATE, "
+                    + "AppointmentTime TIME, "
+                    + "Booked BOOLEAN)";
+            st.executeUpdate(createAppointmentTableSQL);
+            // Confirm database and table creation
+            System.out.println("Database and table created successfully.");
 
             // Query employees with salary > 5000
         } catch (SQLException s) {

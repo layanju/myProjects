@@ -1,307 +1,268 @@
 package pack305;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 
+import javax.swing.*;                     
+import java.awt.*;                        
+import java.awt.event.ActionEvent;        
+import java.awt.event.ActionListener;     
+import java.awt.image.BufferedImage;      
+import java.io.IOException;               
+import java.sql.*;                        
+import java.util.logging.Level;           
+import java.util.logging.Logger;          
+import javax.imageio.ImageIO;             
+
+/**
+ * AdvisorsGUI is a graphical user interface (GUI) application for consulting services.
+ * Users can select different talents (Drawing, Music, Writing, Photography)
+ * and view a list of consultants available for each talent.
+ */
 public class AdvisorsGUI {
 
+    // Main application window (frame)
     private JFrame frame;
-    private JButton advisor1Button;
-    private JButton advisor2Button;
-    private JButton advisor3Button;
-    private JButton advisor4Button;
-    Color buttonColor = new Color(116, 180, 196); // #74b4c4, color for the buttons
-    BufferedImage backgroundImage;
-    BufferedImage consultationBackgroundImage; // background image for the consultation window
 
+    // Database connection details
+    private static final String URL = "jdbc:mysql://localhost:3306/project2";  // Database URL
+    private static final String USER = "root";                                 // Database username
+    private static final String PASSWORD = "layanasdf";                             // Database password
+
+    // GUI customization
+    Color buttonColor = new Color(116, 180, 196);   // Color for buttons
+    BufferedImage backgroundImage;                 // Background image for the GUI
+
+    /**
+     * Constructor initializes the AdvisorsGUI by setting up the main GUI window and loading resources.
+     */
     public AdvisorsGUI() {
         try {
-            // load the main background image from resources
+            // Load the background image for the application
             backgroundImage = ImageIO.read(getClass().getResourceAsStream("/image/bground1.png"));
         } catch (IOException e) {
+            // Handle errors if the image cannot be loaded
             System.out.println("Error loading background image: " + e.getMessage());
         }
-        createMainGUI(); // create the main GUI
+        // Create the main GUI
+        createMainGUI();
     }
 
-    private void createMainGUI() {
-        // create the main window
-        frame = new JFrame("Consultment App");
-        frame.setSize(900, 700); // set window size
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exit on close
-
-        // create a custom panel for drawing the background
-        JPanel backgroundPanel = new JPanel() {
+    /**
+     * Creates a panel with a custom background image.
+     *
+     * @param backgroundImage The background image to use for the panel
+     * @return JPanel with the specified background
+     */
+    private JPanel createBackgroundPanel(BufferedImage backgroundImage) {
+        return new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 if (backgroundImage != null) {
-                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // draw the background image
+                    // Draw the background image to fit the panel's size
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
                 }
             }
         };
-        backgroundPanel.setLayout(null); // set null layout for absolute positioning
-        frame.setContentPane(backgroundPanel); // set the content pane to the custom background panel
+    }
 
-        // main title label
+    /**
+     * Sets up the main GUI window, including talent selection buttons and navigation options.
+     */
+    private void createMainGUI() {
+        // Initialize the main application window
+        frame = new JFrame("Consultment App");
+        frame.setSize(900, 700);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Create the main background panel
+        JPanel backgroundPanel = createBackgroundPanel(backgroundImage);
+        backgroundPanel.setLayout(null);  // Use absolute layout for precise positioning
+        frame.setContentPane(backgroundPanel);
+
+        // Add a title label
         JLabel label = new JLabel("Choose a talent");
-        label.setBounds(150, 50, 200, 70); // set position and size
-        label.setFont(new Font("Serif", Font.BOLD, 30)); // set font
-        backgroundPanel.add(label); // add label to background panel
+        label.setBounds(150, 50, 200, 70);                 // Position and size
+        label.setFont(new Font("Serif", Font.BOLD, 30));   // Font styling
+        backgroundPanel.add(label);
 
-        // create the button for drawing talent
-        JButton drawingButton = new JButton("Drawing");
-        drawingButton.setBounds(180, 150, 250, 100); // set button size and position
-        drawingButton.setFont(new Font("Arial", Font.PLAIN, 24)); // set font
-        drawingButton.setBackground(buttonColor); // set button color
-        drawingButton.setToolTipText("Click to view drawing consultants."); // tooltip for button
+        // Create buttons for different talents
+        createTalentButton(backgroundPanel, "Drawing", "/image/draw.png", 180, 150, "Click to view drawing consultants.");
+        createTalentButton(backgroundPanel, "Music", "/image/music.png", 500, 150, "Click to view music consultants.");
+        createTalentButton(backgroundPanel, "Writing", "/image/writing.png", 180, 300, "Click to view writing consultants.");
+        createTalentButton(backgroundPanel, "Photography", "/image/pic.png", 500, 300, "Click to view photography consultants.");
 
-        // load drawing image from resources
-        try {
-            BufferedImage drawingImage = ImageIO.read(getClass().getResourceAsStream("/image/draw.png"));
-            if (drawingImage != null) {
-                Image scaledImage = drawingImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH); // scale the image
-                ImageIcon drawingIcon = new ImageIcon(scaledImage); // set image icon
-                drawingButton.setIcon(drawingIcon); // add icon to button
-                drawingButton.setVerticalTextPosition(SwingConstants.BOTTOM); // text below the icon
-                drawingButton.setHorizontalTextPosition(SwingConstants.CENTER); // center align the text
+        // Create a back button for navigation
+        JButton backButton = new JButton("← Back");
+        backButton.setBounds(10, 10, 80, 45);                 // Position and size
+        backButton.setBorderPainted(false);                  // Hide border
+        backButton.setFocusPainted(false);                   // Disable focus rectangle
+        backButton.setContentAreaFilled(false);              // Make background transparent
+        backgroundPanel.add(backButton);
+
+        // Add action listener for the back button
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Navigate to the home page when back button is clicked
+                HomePage home = new HomePage("User");
+                home.setVisible(true);
+                frame.dispose();
             }
-        } catch (IOException e) {
-            System.out.println("Error loading drawing image: " + e.getMessage());
-        }
-
-        // add action listener to the button
-        drawingButton.addActionListener((ActionEvent e) -> {
-            createConsultationGUI(); // open consultation window
         });
-        backgroundPanel.add(drawingButton); // add drawing button to background panel
 
-        // create the button for music talent
-        JButton musicButton = new JButton("Music");
-        musicButton.setBounds(500, 150, 250, 100); // set size and position
-        musicButton.setFont(new Font("Arial", Font.PLAIN, 24)); // set font
-        musicButton.setBackground(buttonColor); // set background color
-        musicButton.setToolTipText("Click to view music consultants."); // set tooltip
-
-        // load music image from resources
-        try {
-            BufferedImage musicImage = ImageIO.read(getClass().getResourceAsStream("/image/music.png"));
-            if (musicImage != null) {
-                Image scaledImage = musicImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH); // scale the image
-                ImageIcon musicIcon = new ImageIcon(scaledImage); // set image icon
-                musicButton.setIcon(musicIcon); // add icon to button
-                musicButton.setVerticalTextPosition(SwingConstants.BOTTOM); // text below the icon
-                musicButton.setHorizontalTextPosition(SwingConstants.CENTER); // center align the text
-            }
-        } catch (IOException e) {
-            System.out.println("Error loading music image: " + e.getMessage());
-        }
-
-        // add action listener to the music button
-        musicButton.addActionListener((ActionEvent e) -> {
-            createConsultationGUI(); // open consultation window
-        });
-        backgroundPanel.add(musicButton); // add music button to background panel
-
-        // create the button for writing talent
-        JButton writingButton = new JButton("Writing");
-        writingButton.setBounds(180, 300, 250, 100); // set size and position
-        writingButton.setFont(new Font("Arial", Font.PLAIN, 24)); // set font
-        writingButton.setBackground(buttonColor); // set background color
-        writingButton.setToolTipText("Click to view writing consultants."); // set tooltip
-
-        // load writing image from resources
-        try {
-            BufferedImage writingImage = ImageIO.read(getClass().getResourceAsStream("/image/writing.png"));
-            if (writingImage != null) {
-                Image scaledImage = writingImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH); // scale the image
-                ImageIcon writingIcon = new ImageIcon(scaledImage); // set image icon
-                writingButton.setIcon(writingIcon); // add icon to button
-                writingButton.setVerticalTextPosition(SwingConstants.BOTTOM); // text below the icon
-                writingButton.setHorizontalTextPosition(SwingConstants.CENTER); // center align the text
-            }
-        } catch (IOException e) {
-            System.out.println("Error loading writing image: " + e.getMessage());
-        }
-
-        // add action listener to the writing button
-        writingButton.addActionListener((ActionEvent e) -> {
-            createConsultationGUI(); // open consultation window
-        });
-        backgroundPanel.add(writingButton); // add writing button to background panel
-
-        // create the button for photography talent
-        JButton photographyButton = new JButton("Photography");
-        photographyButton.setBounds(500, 300, 250, 100); // set size and position
-        photographyButton.setFont(new Font("Arial", Font.PLAIN, 24)); // set font
-        photographyButton.setBackground(buttonColor); // set background color
-        photographyButton.setToolTipText("Click to view photography consultants."); // set tooltip
-
-        // load photography image from resources
-        try {
-            BufferedImage photographyImage = ImageIO.read(getClass().getResourceAsStream("/image/pic.png"));
-            if (photographyImage != null) {
-                Image scaledImage = photographyImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH); // scale the image
-                ImageIcon photographyIcon = new ImageIcon(scaledImage); // set image icon
-                photographyButton.setIcon(photographyIcon); // add icon to button
-                photographyButton.setVerticalTextPosition(SwingConstants.BOTTOM); // text below the icon
-                photographyButton.setHorizontalTextPosition(SwingConstants.CENTER); // center align the text
-            }
-        } catch (IOException e) {
-            System.out.println("Error loading photography image: " + e.getMessage());
-        }
-
-        // add action listener to the photography button
-        photographyButton.addActionListener((ActionEvent e) -> {
-            createConsultationGUI(); // open consultation window
-        });
-        backgroundPanel.add(photographyButton); // add photography button to background panel
-
-        // make the main window visible
+        // Make the window visible
         frame.setVisible(true);
     }
 
-    // function to display the consultation window with a new background
-    public void createConsultationGUI() {
+    /**
+     * Creates a button for a specific talent.
+     */
+    private void createTalentButton(JPanel panel, String text, String imagePath, int x, int y, String tooltip) {
+        JButton button = new JButton(text);
+        button.setBounds(x, y, 250, 100);                        // Position and size
+        button.setFont(new Font("Arial", Font.PLAIN, 24));       // Font styling
+        button.setBackground(buttonColor);                      // Background color
+        button.setToolTipText(tooltip);                         // Tooltip
+
         try {
-            JFrame frame = new JFrame("List of Consultants"); // create new frame for consultants
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // set close operation
-            // load consultation window background image from resources
-            ImageIcon background = new ImageIcon(getClass().getResource("/image/bground1.png"));
+            // Load and set the button's icon
+            BufferedImage image = ImageIO.read(getClass().getResourceAsStream(imagePath));
+            if (image != null) {
+                Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize image
+                ImageIcon icon = new ImageIcon(scaledImage);
+                button.setIcon(icon);
+                button.setVerticalTextPosition(SwingConstants.BOTTOM);  // Text position
+                button.setHorizontalTextPosition(SwingConstants.CENTER);
+            }
+        } catch (IOException e) {
+            // Handle errors if the image cannot be loaded
+            System.out.println("Error loading " + text + " image: " + e.getMessage());
+        }
 
-            JLabel backgroundLabel = new JLabel(background); // create a label for the background
-            backgroundLabel.setBounds(0, -40, 900, 700); // set background size
+        // Add action listener for the button
+        button.addActionListener((ActionEvent e) -> {
+            // Open the consultants list for the selected talent
+            createConsultationGUI(text);
+        });
 
-            // create a custom panel to draw the consultation background
-            JPanel backgroundPanel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    if (consultationBackgroundImage != null) {
-                        g.drawImage(consultationBackgroundImage, 0, 0, getWidth(), getHeight(), this); // draw the consultation background
-                    }
-                }
-            };
-            backgroundPanel.setLayout(new BorderLayout()); // set layout for the background panel
-            frame.setContentPane(backgroundPanel); // set the content pane for the consultation window
+        // Add the button to the panel
+        panel.add(button);
+    }
 
-            frame.setPreferredSize(new Dimension(900, 700)); // set preferred size
-            frame.pack(); // adjust window size
+    /**
+     * Displays a window with a list of consultants for the selected talent.
+     *
+     * @param profession The selected talent (e.g., "Drawing", "Music")
+     */
+    public void createConsultationGUI(String profession) {
+        try {
+            // Initialize a new window for consultants
+            JFrame frame = new JFrame("List of Consultants - " + profession);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            // panel for the title
-            JPanel titlePanel = new JPanel();
-            titlePanel.setLayout(new FlowLayout()); // set layout for title panel
-            JLabel titleLabel = new JLabel("Consultants"); // create title label
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // set font for title
-            titlePanel.setOpaque(false); // make title panel transparent to show background
-            titlePanel.add(titleLabel); // add title label to title panel
-            backgroundPanel.add(titlePanel, BorderLayout.PAGE_START); // add title panel to background panel
+            // Create background panel
+            JPanel backgroundPanel = createBackgroundPanel(backgroundImage);
+            backgroundPanel.setLayout(null); 
+            frame.setContentPane(backgroundPanel);
 
-            // panel to hold the advisors/consultants
+            // Panel to display consultants
             JPanel advisorsPanel = new JPanel();
-            advisorsPanel.setLayout(new BoxLayout(advisorsPanel, BoxLayout.Y_AXIS)); // set vertical layout for advisors
-            advisorsPanel.setOpaque(false); // make advisors panel transparent
+            advisorsPanel.setLayout(new BoxLayout(advisorsPanel, BoxLayout.Y_AXIS));  // Vertical layout
+            advisorsPanel.setOpaque(false);  // Transparent panel
 
-            img(advisorsPanel);
+            // Load consultants from the database
+            img(advisorsPanel, profession); 
 
-            // add advisors to the panel
-            // add a scroll pane for advisors panel
+            // Add a scroll pane for the consultants list
             JScrollPane scrollPane = new JScrollPane(advisorsPanel);
-            scrollPane.setOpaque(false); // make scroll pane transparent
-            scrollPane.getViewport().setOpaque(false); // make the viewport of the scroll pane transparent
-            backgroundPanel.add(scrollPane, BorderLayout.CENTER); // add the scroll pane to the background panel
+            scrollPane.setOpaque(false);
+            scrollPane.getViewport().setOpaque(false);
+            scrollPane.setBounds(0, 50, 900, 600); 
+            backgroundPanel.add(scrollPane);
 
-            frame.setVisible(true); // make the consultation window visible
+            // Create a back button
+            JButton backButton = new JButton("← Back");
+            backButton.setBounds(10, 10, 80, 45);                 // Position and size
+            backButton.setBorderPainted(false);
+            backButton.setFocusPainted(false);
+            backButton.setContentAreaFilled(false);
+            backgroundPanel.add(backButton);
+
+            // Add action listener for the back button
+            backButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Close the current window
+                    frame.dispose();
+                }
+            });
+
+            frame.setPreferredSize(new Dimension(900, 700));
+            frame.pack();
+            frame.setVisible(true);
+
         } catch (SQLException ex) {
+            // Log SQL exceptions
             Logger.getLogger(AdvisorsGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void img(JPanel advisorsPanel) throws SQLException {
+    /**
+     * Loads consultants from the database and adds them to the panel.
+     *
+     * @param advisorsPanel The panel to which the consultants will be added
+     * @param profession    The selected talent (e.g., "Drawing")
+     * @throws SQLException If a database error occurs
+     */
+    public void img(JPanel advisorsPanel, String profession) throws SQLException {
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pst = con.prepareStatement(
+                     "SELECT DISTINCT FirstName, LastName FROM Consultative WHERE Profession = ?")) {
 
-        String ConnectionURL = "jdbc:mysql://localhost:3306/project2";
+            pst.setString(1, profession);  // Set the profession parameter
 
-        Connection con = DriverManager.getConnection(ConnectionURL, "root", "layanasdf");
+            ResultSet rs = pst.executeQuery();
 
-        Statement st = con.createStatement();
-
-        String sql = "SELECT * FROM appointments";
-        String fullName ;
-        ResultSet rs = st.executeQuery(sql);
-        Set<String> advisorNames = new HashSet<>();
-        while (rs.next()) {
-
-            String Fname = rs.getString("FName");
-            String Lname = rs.getString("LName");
-            fullName = Fname + " " + Lname;
-            advisorNames.add(fullName);
-          
-            // add advisors to the panel
+            while (rs.next()) {
+                // Retrieve consultant's full name
+                String fullName = rs.getString("FirstName") + " " + rs.getString("LastName");
+                addAdvisorButton(advisorsPanel, "Counselor: " + fullName);  // Add a button for each consultant
+            }
+        } catch (SQLException ex) {
+            // Log SQL exceptions
+            Logger.getLogger(AdvisorsGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // الآن، يمكننا إضافة الأسماء الفريدة إلى اللوحة
-        for (String name : advisorNames) {
-            addAdvisorButton(advisorsPanel, "Counselor: " + name);
-          
-
-        }
-
     }
 
-    // function to make an image circular
-    private BufferedImage makeCircularImage(BufferedImage image, int size) {
-        BufferedImage scaledImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = scaledImage.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // enable anti-aliasing
-        g2.drawImage(image, 0, 0, size, size, null); // scale the image
-        g2.dispose();
-
-        BufferedImage circularImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-        g2 = circularImage.createGraphics();
-        g2.setClip(new java.awt.geom.Ellipse2D.Float(0, 0, size, size)); // clip the image to a circular shape
-        g2.drawImage(scaledImage, 0, 0, null); // draw the scaled image
-        g2.dispose();
-        return circularImage; // return the circular image
-    }
-
-    // function to add an advisor button with a circular image
+    /**
+     * Adds a button for each consultant to the panel.
+     *
+     * @param panel    The panel to which the button will be added
+     * @param fullName The consultant's full name
+     */
     private void addAdvisorButton(JPanel panel, String fullName) {
-        JButton advisorButton = new JButton(); // create a new button for the advisor
-        advisorButton.setPreferredSize(new Dimension(400, 80)); // تعيين حجم ثابت للزر
-        advisorButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
-        advisorButton.setBackground(new Color(0xE2F2F5)); // set background color
-        advisorButton.setHorizontalAlignment(SwingConstants.CENTER);
-        advisorButton.setText("Counselor: " + fullName); // تعيين النص ليحتوي على الاسم الكامل
+        JButton advisorButton = new JButton();
+        advisorButton.setPreferredSize(new Dimension(400, 80));   // Button size
+        advisorButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));  // Allow resizing
+        advisorButton.setBackground(new Color(0xE2F2F5));         // Background color
+        advisorButton.setHorizontalAlignment(SwingConstants.CENTER);  // Center text
+        advisorButton.setText(fullName);                         // Set button text
 
+        // Add action listener for the consultant button
         advisorButton.addActionListener(new ActionListener() {
-
+            @Override
             public void actionPerformed(ActionEvent e) {
-
                 try {
+                    // Open the booking window for the selected consultant
                     Booking booking = new Booking(fullName);
                 } catch (SQLException ex) {
+                    // Log SQL exceptions
                     Logger.getLogger(AdvisorsGUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
-
         });
 
-        // load and set advisor image
-        advisorButton.setHorizontalTextPosition(SwingConstants.RIGHT); // position text to the right of the icon
-        panel.add(advisorButton); // add the advisor button to the panel
+        // Add the button to the panel
+        panel.add(advisorButton);
     }
 }
